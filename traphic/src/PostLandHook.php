@@ -5,7 +5,7 @@
  */
 class PostLandHook extends BaseHook {
 
-    const OUT_PREFIX = "LAND";
+    const OUT_PREFIX = "TR_LAND";
 
     public function doHook(ArcanistWorkflow $workflow) {
         $dict = $workflow->getRevisionDict();

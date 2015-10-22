@@ -5,7 +5,7 @@
  */
 class PostDiffHook extends BaseHook {
 
-    const OUT_PREFIX = "DIFF";
+    const OUT_PREFIX = "TR_DIFF";
 
     public function doHook(ArcanistWorkflow $workflow) {
         $diffObj = $this->getDiffObj($workflow);
@@ -24,7 +24,7 @@ class PostDiffHook extends BaseHook {
                         $remoteBranchName));
                 } else {
                     // this is where the magic happens
-                    $this->pushBranchToRemote($remoteBranchName);
+                    $this->pushBranchToRemote($topicBranch, $remoteBranchName);
                 }
             } else {
                 $this->writeErr("Could not determine branch name to push to GitHub");
@@ -98,10 +98,10 @@ class PostDiffHook extends BaseHook {
         return $diffObj;
     }
 
-    private function pushBranchToRemote($remoteBranchName) {
+    private function pushBranchToRemote($topicBranch, $remoteBranchName) {
         // Using force here because we don't really care what was there
         // before... we just want the new changes to get CI'd.
-        $gitCommand = escapeshellcmd("git push origin '$remoteBranchName' --force --no-verify");
+        $gitCommand = escapeshellcmd("git push origin '$topicBranch:$remoteBranchName' --force --no-verify");
 
         $this->writeOut(pht(
             "Pushing to remote branch %s on GitHut with this command:\n    %s\n",

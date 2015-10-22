@@ -9,7 +9,7 @@
  *  https://secure.phabricator.com/book/arcanist/class/ArcanistDiffWorkflow/
  *  https://secure.phabricator.com/diffusion/ARC/browse/master/src/workflow/ArcanistDiffWorkflow.php
  */
-class Conphig extends ArcanistConfiguration {
+class TraphicConfiguration extends ArcanistConfiguration {
 
     /**
      * Adds post workflow hooks
