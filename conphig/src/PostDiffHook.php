@@ -5,7 +5,7 @@
  */
 class PostDiffHook extends BaseHook {
 
-    const OUT_PREFIX = "ESDIFF";
+    const OUT_PREFIX = "DIFF";
 
     public function doHook(ArcanistWorkflow $workflow) {
         $diffObj = $this->getDiffObj($workflow);
@@ -18,13 +18,13 @@ class PostDiffHook extends BaseHook {
             if ( $revisionID && $topicBranch ) {
                 $remoteBranchName = HookUtils::createRemoteBranchName($revisionID, $topicBranch);
 
-                if ( HookUtils::shouldSkipCi($revisionDict) ) {
+                if ( HookUtils::shouldSkipCI($revisionDict) ) {
                     $this->writeOut(pht(
-                        "Saw skip ci message in commit, skipping push of remote branch %s\n",
+                        "Saw 'skip ci' message in commit, skipping push of remote branch %s\n",
                         $remoteBranchName));
                 } else {
                     // this is where the magic happens
-                    $this->pushBranchToRemote($topicBranch, $remoteBranchName);
+                    $this->pushBranchToRemote($remoteBranchName);
                 }
             } else {
                 $this->writeErr("Could not determine branch name to push to GitHub");
@@ -48,7 +48,7 @@ class PostDiffHook extends BaseHook {
         if ( array_key_exists(0, $revisionDictArr) ) {
             $revisionDict = $revisionDictArr[0];
         } else {
-            $this->writeErr("Did not find revision in query result from Phabricate");
+            $this->writeErr("Did not find revision in conduit query result from Phabricator");
 
             $errorMessage =
                 HookUtils::getStringValueFromObj("errorMessage", $revisionDictArr);
@@ -85,7 +85,7 @@ class PostDiffHook extends BaseHook {
         if ( array_key_exists($diffId, $diffQueryResultArr) ) {
             $diffObj = $diffQueryResultArr[$diffId];
         } else {
-            $this->writeErr("Did not find diff in query result from Phabricate");
+            $this->writeErr("Did not find diff in conduit query result from Phabricator");
 
             $errorMessage =
                 HookUtils::getStringValueFromObj("errorMessage", $diffQueryResultArr);
@@ -98,13 +98,13 @@ class PostDiffHook extends BaseHook {
         return $diffObj;
     }
 
-    private function pushBranchToRemote($topicBranch, $remoteBranchName) {
+    private function pushBranchToRemote($remoteBranchName) {
         // Using force here because we don't really care what was there
         // before... we just want the new changes to get CI'd.
-        $gitCommand = escapeshellcmd("git push origin '$topicBranch:$remoteBranchName' --force");
+        $gitCommand = escapeshellcmd("git push origin '$remoteBranchName' --force --no-verify");
 
         $this->writeOut(pht(
-            "Pushing to remote branch %s on GitHutb with this command:\n    %s\n",
+            "Pushing to remote branch %s on GitHut with this command:\n    %s\n",
             $remoteBranchName, $gitCommand));
 
         $exitCode = 0;

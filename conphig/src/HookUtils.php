@@ -8,7 +8,7 @@ class HookUtils {
     const PH_TESTPLAN = "testPlan";
 
     // the first %s is the diff id, the second is the topic branch name
-    const REMOTE_BRANCH_NAME_TEMPLATE = "ES_D%s_%s";
+    const REMOTE_BRANCH_NAME_TEMPLATE = "D%s_%s";
 
     /**
      * Create the remote branch name in an consistent way
@@ -21,19 +21,19 @@ class HookUtils {
      * See if we should skip the branch push/delete if we have
      * [skip ci] or [ci skip] in various fields of the diff.
      */
-    public static function shouldSkipCi($revisionDict) {
+    public static function shouldSkipCI($revisionDict) {
         $title = self::getStringValueFromObj(self::PH_TITLE, $revisionDict);
         $summary = self::getStringValueFromObj(self::PH_SUMMARY, $revisionDict);
         $testPlan = self::getStringValueFromObj(self::PH_TESTPLAN, $revisionDict);
-        return self::matchesSkipCi($title) ||
-               self::matchesSkipCi($summary) ||
-               self::matchesSkipCi($testPlan);
+        return self::matchesSkipCI($title) ||
+               self::matchesSkipCI($summary) ||
+               self::matchesSkipCI($testPlan);
     }
 
     /**
      * Determing if a string matches our skip ci text.
      */
-    public static function matchesSkipCi($str) {
+    public static function matchesSkipCI($str) {
         return preg_match("/\[(?:skip ci|ci skip)\]/i", $str);
     }
 

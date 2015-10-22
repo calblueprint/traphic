@@ -5,7 +5,7 @@
  */
 class PostLandHook extends BaseHook {
 
-    const OUT_PREFIX = "ESLAND";
+    const OUT_PREFIX = "LAND";
 
     public function doHook(ArcanistWorkflow $workflow) {
         $dict = $workflow->getRevisionDict();
@@ -19,9 +19,9 @@ class PostLandHook extends BaseHook {
                 $remoteBranchName =
                     HookUtils::createRemoteBranchName($revisionId, $topicBranch);
 
-                if ( HookUtils::shouldSkipCi($dict) ) {
+                if ( HookUtils::shouldSkipCI($dict) ) {
                     $this->writeOut(pht(
-                        "Saw skip ci message in commit, skipping delete of remote branch %s\n",
+                        "Saw 'skip ci' message in commit, skipping delete of remote branch %s\n",
                         $remoteBranchName));
                 } else {
                     // Here is the majicks:

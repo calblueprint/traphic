@@ -25,7 +25,7 @@ abstract class BaseHook {
 
     protected function writeErr($str) {
         $this->console->writeOut(pht(
-            "%s: !!! %s\n", $this->getOutPrefix(), $str));
+            "%s: [ERROR] %s\n", $this->getOutPrefix(), $str));
     }
 
     /**
