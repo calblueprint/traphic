@@ -1,26 +1,44 @@
 # traphic
 
-This repo is an extension to [arcanist](https://github.com/phacility/arcanist) to enable Travis-CI
-integration to run [Phabricator](http://phabricator.org/) diffs through continuous integration. It
-is mostly here as a reference. Please fork if you think all or parts of it may be useful to you.
+Forked from: https://github.com/zerodiff/traphic
 
-## arcanist hooks
+This repo is an extension to [arcanist](https://github.com/phacility/arcanist) to enable GitHub-integrated continuous
+integration services (e.g. Codeship, CircleCI) to run against [Phabricator](http://phabricator.org/) diffs.
 
-The two things it currently does is add post-diff and post-land hook. The post-diff hook pushes
-the diff as a remote branch to GitHub so, when Travis-CI sees it, it will be built. The post-land
-hook removes the remote branch after landing.
+## What It Does
 
-The way arcanist knows to use this library is the .arcconfig in the base dir of this project.
-Specifically, this part:
+Traphic adds a post-diff and post-land hook to arcanist.  The post-diff hook pushes the diff as a remote branch to
+GitHub, letting continuous integration services handle the diff. The post-land hook prunes the remote branch after
+landing.
+
+## How To Use It
+
+Step 0: Make sure you're using [Blueprint's forked version](https://github.com/calblueprint/libphutil)  of libphutil.
+You should have cloned this version when setting up Phabricator for your project.
+
+First, clone the Traphic repo to your preferred location.  Next, export an environment variable from your `.bashrc`
+that points to the location of the `/traphic` subdirectory within the `Traphic` repo:
+
+    export TRAPHIC_PATH=/path/to/Traphic/traphic
+
+Make sure the path is absolute.  Then, add the following to your projects's `.arcconfig':
 
 ```
 "load" : [
-  "path/to/conphig"
+  "$TRAPHIC_PATH"
 ],
-"arcanist_configuration" : "Conphig"
+"arcanist_configuration" : "TraphicConfiguration"
 
 ```
-I think there's also a way to add these settings to your `~/.arcrc` so it can be cross-project.
+
+## Phabricator Settings
+
+Change Diffusion settings to track only branches that are *not* your diff branches.  All Traphic brances are prefixed
+with `TR_D`, so set *Track Only* to `regexp(/^(?!ES\_D)/)`.  Also, set *Autoclose Only* to `master`, or whatever
+branches you want to autoclose.
+
+
+## Development
 
 If you're adding new classes, let arcanist know what to look for:
 ```
@@ -32,17 +50,9 @@ https://secure.phabricator.com/book/phabricator/article/libraries/
 https://secure.phabricator.com/book/phabricator/article/arcanist_lint_unit/
 https://secure.phabricator.com/book/arcanist/class/ArcanistConfiguration
 
-## phabricator settings
-
-Change Diffusion settings to track only branches that are not your diff branches, 
-e.g. set *Track Only* to `regexp(/^(?!ES\_D)/)` and *Autoclose Only* to `master` 
-or whatever branches you want to autoclose. Otherwise, it will autoclose diffs on 
-your remote diff branches when they appear on the remote and are loaded by Phabricator.
-
-You may also want to refactor this to make the `ES\_` prefix for the branches something
-else. This was a convenient prefix for us.
 
 ## extra bonus scripts
+TODO(aleks): fix this part
 
 For our integration, we also added a script that can be run on Travis to add a message to the diff
 when the build succeeds or fails. We created a bot user in our Phabricator instance to have
@@ -89,10 +99,3 @@ The `phobot.arcrc` file looks something like this:
 ```
 It can be created by hand, but you need to get the conduit api token for your bot (or other) user
 to create it. Usually this is done by `arc install-certificate` and following the instructions.
-
-## caveats
-
-I have this working, but YMMV. The scripts in this configuration have not been tested, since
-I did some refactoring to make this repo public. Hopefully I'll update with fixes. I can
-answer some questions, but mostly this was built by reading a lot of Phrabricator PHP
-code and figuring it out. I'm not generally a PHP developer, but I play one on TV.
