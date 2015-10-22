@@ -8,9 +8,9 @@ class HookUtils {
     const PH_TESTPLAN = "testPlan";
 
     // the first %s is the diff id, the second is the topic branch name
-    const REMOTE_BRANCH_NAME_TEMPLATE = "D%s_%s";
+    const REMOTE_BRANCH_NAME_TEMPLATE = "TR_D%s_%s";
 
-    /**
+    /*
      * Create the remote branch name in an consistent way
      */
     public static function createRemoteBranchName($revisionId, $topicBranch) {
