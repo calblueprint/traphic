@@ -34,8 +34,10 @@ Make sure the path is absolute.  Then, add the following to your projects's `.ar
 ## Phabricator Settings
 
 Change Diffusion settings to track only branches that are *not* your diff branches.  All Traphic brances are prefixed
-with `TR_D`, so set *Track Only* to `regexp(/^(?!ES\_D)/)`.  Also, set *Autoclose Only* to `master`, or whatever
+with `TR_D`, so set *Track Only* to `regexp(/^(?!TR\_D)/)`.  Also, set *Autoclose Only* to `master`, or whatever
 branches you want to autoclose.
+
+**If you don't configure this correctly, Phabricator will auto-close your diffs.**
 
 
 ## Development
